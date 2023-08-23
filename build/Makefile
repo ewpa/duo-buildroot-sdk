@@ -550,7 +550,7 @@ br-rootfs-prepare:export CROSS_COMPILE_SDK=$(patsubst "%",%,$(CONFIG_CROSS_COMPI
 br-rootfs-prepare:
 	$(call print_target)
 ifneq ($(STORAGE_TYPE), sd)
-	${Q}cp -r ${RAMDISK_PATH}/rootfs/buildroot_fs/arm/* $(BR_ROOTFS_DIR)
+	# ${Q}cp -r ${RAMDISK_PATH}/rootfs/buildroot_fs/arm/* $(BR_ROOTFS_DIR)
 	$(call TARGET_PACKAGE_INSTALL_BR_ROOTFS)
 	${Q}mkdir -p $(BR_ROOTFS_DIR)/etc/init.d/
 	${Q}python3 $(COMMON_TOOLS_PATH)/image_tool/create_automount.py $(FLASH_PARTITION_XML) $(BR_ROOTFS_DIR)/etc/init.d/
@@ -580,8 +580,13 @@ br-rootfs-pack:
 	${Q}$(MAKE) -j${NPROC} -C $(BR_DIR)
 	# ${Q}rm -rf $(BR_ROOTFS_DIR)/*
 # copy rootfs to rawimg dir
+ifneq ($(STORAGE_TYPE), spinor)
 	${Q}cp $(TARGET_OUTPUT_DIR)/images/rootfs.ext4 $(OUTPUT_DIR)/rawimages/rootfs_ext4.$(STORAGE_TYPE)
 	$(call raw2cimg ,rootfs_ext4.$(STORAGE_TYPE))
+else
+	${Q}cp $(TARGET_OUTPUT_DIR)/images/rootfs.squashfs $(OUTPUT_DIR)/rawimages/rootfs.$(STORAGE_TYPE)
+	$(call raw2cimg ,rootfs.$(STORAGE_TYPE))
+endif
 
 ifeq ($(CONFIG_BUILDROOT_FS),y)
 rootfs:br-rootfs-prepare
