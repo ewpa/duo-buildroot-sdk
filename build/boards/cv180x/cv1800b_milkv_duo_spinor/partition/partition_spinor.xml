@@ -2,6 +2,6 @@
     <partition label="fip" size_in_kb="640" readonly="false" file="fip.bin"/>
     <partition label="BOOT" size_in_kb="3072" readonly="false" file="boot.spinor"/>
     <partition label="ENV" size_in_kb="64" file="" />
-    <partition label="ROOTFS" size_in_kb="12608" readonly="true" file="rootfs.spinor" />
-    <partition label="DATA" size_in_kb="16384" readonly="false" file="" />
+    <partition label="ROOTFS" size_in_kb="16704" readonly="true" file="rootfs.spinor" />
+    <partition label="DATA" size_in_kb="12288" readonly="false" file="" />
 </physical_partition>
