@@ -306,7 +306,7 @@
 				"fi;"
 
 	#ifndef CONFIG_SD_BOOT
-		#define CONFIG_BOOTCOMMAND	SHOWLOGOCMD "cvi_update || run norboot || run nandboot ||run emmcboot"
+		#define CONFIG_BOOTCOMMAND	SHOWLOGOCMD "cvi_update || run norboot || run nandboot || run emmcboot || run pxeboot"
 	#else
 		#define CONFIG_BOOTCOMMAND	SHOWLOGOCMD "run sdboot"
 	#endif
