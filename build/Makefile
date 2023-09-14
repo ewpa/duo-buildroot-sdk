@@ -580,7 +580,10 @@ br-rootfs-pack:
 	${Q}$(MAKE) -j${NPROC} -C $(BR_DIR)
 	# ${Q}rm -rf $(BR_ROOTFS_DIR)/*
 # copy rootfs to rawimg dir
-ifneq ($(STORAGE_TYPE), spinor)
+ifeq ($(STORAGE_TYPE),spinand)
+	${Q}python3 $(COMMON_TOOLS_PATH)/spinand_tool/mkubiimg.py --ubionly $(FLASH_PARTITION_XML) ROOTFS $(TARGET_OUTPUT_DIR)/images/rootfs.squashfs $(OUTPUT_DIR)/rawimages/rootfs.spinand -b $(CONFIG_NANDFLASH_BLOCKSIZE) -p $(CONFIG_NANDFLASH_PAGESIZE)
+	$(call raw2cimg ,rootfs.$(STORAGE_TYPE))
+else ifneq ($(STORAGE_TYPE), spinor)
 	${Q}cp $(TARGET_OUTPUT_DIR)/images/rootfs.ext4 $(OUTPUT_DIR)/rawimages/rootfs_ext4.$(STORAGE_TYPE)
 	$(call raw2cimg ,rootfs_ext4.$(STORAGE_TYPE))
 else
