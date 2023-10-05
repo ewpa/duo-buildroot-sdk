@@ -1100,7 +1100,7 @@ struct cvsnfc_chip_info cvsnfc_spi_nand_flash_table[] = {
 		.ecc_status_uncorr_val = 0x2,
 		.sck_l = 1,
 		.sck_h = 0,
-		.max_freq = SPI_NAND_FREQ_93MHz,
+		.max_freq = SPI_NAND_FREQ_62MHz,
 		.sample_param = 0x40001000,
 		.xtal_switch = 1,
 	},
