@@ -146,6 +146,7 @@ if [ $MILKV_BOARD_ARRAY_LEN -eq 1 ]; then
 else
   # no arg
   if [ $# -lt 1 ]; then
+    echo "Available boards: [ ${MILKV_BOARD_ARRAY[@]} ]"
     choose_milkv_board || exit 0
   fi
 
