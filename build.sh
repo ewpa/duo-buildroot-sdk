@@ -108,6 +108,7 @@ function prepare_env()
       exit 1
     fi
   fi
+  PATH=/usr/sbin:$PATH
 }
 
 function milkv_build()
