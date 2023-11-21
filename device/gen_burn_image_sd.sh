@@ -7,7 +7,7 @@ if [ "$#" -ne "1" ]; then
   echo "usage: ${0} OUTPUT_DIR"
   echo ""
   echo "       The script is used to create a sdcard image with two partitions, "
-  echo "       one is fat32 with 128MB, the other is ext4 with 256MB."
+  echo "       one is fat32 with 30MB, the other is ext4 with 224MB."
   echo "       You can modify the capacities in genimage cfg as you wish!"
   echo "       genimage cfg: milkv/genimage-milkv-duo.cfg"
   echo ""
