@@ -26,6 +26,19 @@
 };
 
 / {
+	/delete-node/ wifi_pin;
+	/delete-node/ cvitek-ion;
+	/delete-node/ fast_image;
+	/delete-node/ reserved-memory;
+	/delete-node/ bt_pin;
 
+	leds {
+		compatible = "gpio-leds";
+
+		led0 {
+			gpios = <&portc 24 0>;
+			linux,default-trigger = "activity";
+		};
+	};
 };
 
