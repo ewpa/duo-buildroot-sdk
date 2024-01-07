@@ -1093,13 +1093,12 @@ static int spi_nand_read_from_cache(struct cvsnfc_host *host, int col_addr, int 
 	cvsfc_write(host, REG_SPI_NAND_TRX_CTRL2, len << TRX_DATA_SIZE_SHIFT | 3 << TRX_CMD_CONT_SIZE_SHIFT);
 
 	//here might be changed to use 4 bit mode if support QE bit
-	if (host->nand_chip_info->flags & FLAGS_ENABLE_X4_BIT)
-		spi_nand_set_read_from_cache_mode(host, SPI_NAND_READ_FROM_CACHE_MODE_X4, r_col_addr);
-	else if (host->nand_chip_info->flags & FLAGS_ENABLE_X2_BIT)
-		spi_nand_set_read_from_cache_mode(host, SPI_NAND_READ_FROM_CACHE_MODE_X2, r_col_addr);
-	else
-		spi_nand_set_read_from_cache_mode(host, SPI_NAND_READ_FROM_CACHE_MODE_X1, r_col_addr);
-
+	//if (host->nand_chip_info->flags & FLAGS_ENABLE_X4_BIT)
+	//	spi_nand_set_read_from_cache_mode(host, SPI_NAND_READ_FROM_CACHE_MODE_X4, r_col_addr);
+	//else if (host->nand_chip_info->flags & FLAGS_ENABLE_X2_BIT)
+	//	spi_nand_set_read_from_cache_mode(host, SPI_NAND_READ_FROM_CACHE_MODE_X2, r_col_addr);
+	//else
+	spi_nand_set_read_from_cache_mode(host, SPI_NAND_READ_FROM_CACHE_MODE_X1, r_col_addr);
 
 	cvsnfc_setup_intr(host);
 	cvsfc_write(host, REG_SPI_NAND_TRX_CTRL0,
