@@ -49,6 +49,7 @@
 
 /* default address for bootm command without arguments */
 #define CONFIG_SYS_LOAD_ADDR		0x80080000
+#define PXE_LOAD_ADDR			0x80100000
 #define CONFIG_SYS_BOOTM_LEN		(64 << 20)
 
 /* Generic Interrupt Controller Definitions */
@@ -243,6 +244,19 @@
 		#define MTDIDS_DEFAULT ""
 	#endif
 
+	#if defined CONFIG_CMD_DHCP && defined CONFIG_CMD_PXE
+		#define PXEARGS \
+		"pxeboot=" \
+			"dhcp; " \
+				"if pxe get; then " \
+				"pxe boot; " \
+			"fi\0" \
+		"pxefile_addr_r=" __stringify(PXE_LOAD_ADDR) "\0" \
+		"kernel_addr_r=" __stringify(UIMAG_ADDR) "\0"
+	#else
+		#define PXEARGS
+	#endif
+
 	#define CONFIG_EXTRA_ENV_SETTINGS	\
 		"netdev=eth0\0"		\
 		"consoledev=" CONSOLEDEV  \
@@ -253,6 +267,7 @@
 		"mtdids=" MTDIDS_DEFAULT "\0" \
 		"root=" ROOTARGS "\0" \
 		"sdboot=" SD_BOOTM_COMMAND "\0" \
+		PXEARGS \
 		"othbootargs=" OTHERBOOTARGS "\0" \
 		PARTS_OFFSET
 
@@ -301,7 +316,7 @@
 		#ifdef CONFIG_ENABLE_ALIOS_UPDATE
 			#define CONFIG_BOOTCOMMAND	"cvi_update_rtos"
 		#else
-			#define CONFIG_BOOTCOMMAND	SHOWLOGOCMD "cvi_update || run norboot || run nandboot ||run emmcboot"
+			#define CONFIG_BOOTCOMMAND	SHOWLOGOCMD "cvi_update || run norboot || run nandboot || run emmcboot || run pxeboot"
 		#endif
 	#else
 		#define CONFIG_BOOTCOMMAND	SHOWLOGOCMD "run sdboot"
