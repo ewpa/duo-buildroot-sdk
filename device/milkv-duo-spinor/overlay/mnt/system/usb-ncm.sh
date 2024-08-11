@@ -17,7 +17,7 @@ if [ ${count} -lt 1 ] ;then
 fi
 
 sleep 2
-mkdir -p /lib/firmware
+mount -t tmpfs -o mode=0755,nosuid,nodev tmpfs /lib/firmware
 if test -e /usr/bin/burnd; then
   burnd &
   if test -e /lib/firmware/arduino.elf; then
