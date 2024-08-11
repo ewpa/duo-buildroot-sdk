@@ -90,6 +90,7 @@ function _build_uboot_env()
 {
   _build_atf_env
   _build_fsbl_env
+
   export UBOOT_OUTPUT_FOLDER IMGTOOL_PATH FLASH_PARTITION_XML FIP_BIN_PATH
   export UBOOT_VBOOT RELEASE_VERSION ENABLE_BOOTLOGO STORAGE_TYPE COMPRESSOR_UBOOT
   export PANEL_TUNING_PARAM PANEL_LANE_NUM_TUNING_PARAM PANEL_LANE_SWAP_TUNING_PARAM
@@ -567,6 +568,14 @@ function cvi_setup_env()
   export BR_DEFCONFIG=${BR_BOARD}_defconfig
   export BR_ROOTFS_DIR="$OUTPUT_DIR"/tmp-rootfs
   export BR_MV_VENDOR_DIR=${BR_DIR}/board/${MV_VENDOR}
+
+  # Check if bootlogo is enabled in the u-boot defconfig
+  UBOOT_DEFCONFIG="${BUILD_PATH}/boards/${CHIP_ARCH,,}/${PROJECT_FULLNAME}/u-boot/${BRAND}_${PROJECT_FULLNAME}_defconfig"
+  if grep -q "CONFIG_BOOTLOGO=y" ${UBOOT_DEFCONFIG}; then
+    ENABLE_BOOTLOGO=1
+  else
+    ENABLE_BOOTLOGO=0
+  fi
 }
 
 cvi_print_env()

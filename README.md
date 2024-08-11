@@ -72,11 +72,9 @@ Usage:
 ./build.sh lunch        - Select a board to build
 ./build.sh [board]      - Build [board] directly, supported boards asfollows:
 milkv-duo
-milkv-duo-lite
 milkv-duo256m
-milkv-duo256m-lite
 ```
-Listed at the bottom is the list of currently supported target versions. Those with the `lite` suffix is a simplified version and does not include libraries and application packages such as python, pip, pinpong, etc.
+Listed at the bottom is the list of currently supported target versions.
 
 As shown in the prompt, there are two ways to compile the target version.
 
@@ -85,9 +83,7 @@ The first method is to execute `./build.sh lunch` to bring up the interactive me
 # ./build.sh lunch
 Select a target to build:
 1. milkv-duo
-2. milkv-duo-lite
-3. milkv-duo256m
-4. milkv-duo256m-lite
+2. milkv-duo256m
 Which would you like:
 ```
 
@@ -111,9 +107,7 @@ tar -xf host-tools.tar.gz -C /your/sdk/path/
 Then enter the following commands in sequence to complete the step-by-step compilation. Replace `[board]` and `[config]` in the command with the version that needs to be compiled. The currently supported `board` and corresponding `config` are as follows:
 ```
 milkv-duo               cv1800b_milkv_duo_sd
-milkv-duo-lite          cv1800b_milkv_duo_sd
 milkv-duo256m           cv1812cp_milkv_duo256m_sd
-milkv-duo256m-lite      cv1812cp_milkv_duo256m_sd
 ```
 
 ```bash
@@ -189,11 +183,8 @@ docker exec -it duodocker /bin/bash -c "cd /home/work && cat /etc/issue && ./bui
 Note that the `./build.sh [board]` at the end of the command is the same as the previous usage in the one-click compilation instructions in Ubuntu 22.04. Use `./build.sh` can see how to use the command, use `./ build.sh lunch` can bring up the interactive selection menu, use `./build.sh [board]` to directly compile the target version, `[board]` can be replaced with:
 ```
 milkv-duo
-milkv-duo-lite
 milkv-duo256m
-milkv-duo256m-lite
 ```
-*Versions with the `lite` suffix is a simplified version and does not include libraries and application packages such as python, pip, pinpong, etc.*
 
 Description of some parameters in the command:
 - `duodocker` The name of the running Docker must be consistent with the name set in the previous step.
@@ -232,9 +223,7 @@ root@8edea33c2239:/# cd /home/work/
 Then enter the following commands in sequence to complete the step-by-step compilation. Replace `[board]` and `[config]` in the command with the version that needs to be compiled. The currently supported `board` and corresponding `config` are as follows:
 ```
 milkv-duo               cv1800b_milkv_duo_sd
-milkv-duo-lite          cv1800b_milkv_duo_sd
 milkv-duo256m           cv1812cp_milkv_duo256m_sd
-milkv-duo256m-lite      cv1812cp_milkv_duo256m_sd
 ```
 
 ```bash
@@ -348,7 +337,7 @@ To rollback this change in `/etc/wsl.conf` file set `appendWindowsPath` as true.
 ### The method to log in to the Duo terminal
 
 - Using a serial cable.
-- Using a USB network (RNDIS).
+- Using a USB network (CDC-NCM).
 - Using the Ethernet interface (requires the IO-Board).
 
 The username and password for logging into the Duo terminal are as follows:
@@ -376,7 +365,7 @@ mv /mnt/system/blink.sh_backup /mnt/system/blink.sh && sync
 
 ### Using the IO-Board baseboard
 
-Note that when using the IO-Board, the USB network (RNDIS) is not available, Please use the Ethernet interface on the IO-Board.
+Note that when using the IO-Board, the USB network (CDC-NCM) is not available, Please use the Ethernet interface on the IO-Board.
 
 If you need to assign a fixed MAC address to the Ethernet port of the IO-Board, please execute the following command(**Replace the MAC address in the command with the MAC address you want to set, and please note that MAC addresses of different devices within the same network segment must not be duplicated**):
 
@@ -416,10 +405,10 @@ The command to unmount a USB flash drive:
 umount /mnt/udisk
 ```
 
-To restore the functionality of the USB network (RNDIS) when not using the IO-Board, you can follow these steps:
+To restore the functionality of the USB network (CDC-NCM) when not using the IO-Board, you can follow these steps:
 
 ```bash
-ln -sf /mnt/system/usb-rndis.sh /mnt/system/usb.sh
+ln -sf /mnt/system/usb-ncm.sh /mnt/system/usb.sh
 sync
 ```
 

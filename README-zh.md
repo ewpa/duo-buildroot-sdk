@@ -65,18 +65,20 @@ cd duo-buildroot-sdk/
 会看到编译脚本的使用方法提示：
 ```bash
 # ./build.sh
-Usage:
 ./build.sh              - Show this menu
 ./build.sh lunch        - Select a board to build
-./build.sh [board]      - Build [board] directly, supported boards asfollows:
+./build.sh [board]      - Build [board] directly, supported boards as follows:
 milkv-duo
-milkv-duo-lite
 milkv-duo-spinand
 milkv-duo-spinor
 milkv-duo256m
-milkv-duo256m-lite
+milkv-duo256m-spinand
+milkv-duo256m-spinor
+milkv-duos-emmc
+milkv-duos-sd
+
 ```
-最下边列出的是当前支持的目标版本列表，带 `lite` 后缀的为精简版，不包含 python，pip, pinpong 等库和应用包。带`spinor`或者`spinand` 后缀的为基于IOB板载NOR FLASH或者NAND FLASH的版本。
+最下边列出的是当前支持的目标版本列表。带 `spinor` 或者 `spinand` 后缀的为基于 IOB 板载 NOR FLASH 或者 NAND FLASH 的版本。
 
 如提示中所示，有两种方法来编译目录版本。
 
@@ -85,12 +87,14 @@ milkv-duo256m-lite
 # ./build.sh lunch
 Select a target to build:
 1. milkv-duo
-2. milkv-duo-lite
-3. milkv-duo-spinand
-4. milkv-duo-spinor
-5. milkv-duo256m
-6. milkv-duo256m-lite
-7. milkv-duos
+2. milkv-duo-spinand
+3. milkv-duo-spinor
+4. milkv-duo256m
+5. milkv-duo256m-spinand
+6. milkv-duo256m-spinor
+7. milkv-duos-emmc
+8. milkv-duos-sd
+
 Which would you like:
 ```
 
@@ -114,11 +118,11 @@ tar -xf host-tools.tar.gz -C /your/sdk/path/
 再依次输入如下命令完成分步编译，命令中的 `[board]` 和 `[config]` 替换为需要编译的版本，当前支持的 `board` 和对应的 `config` 如下：
 ```
 milkv-duo               cv1800b_milkv_duo_sd
-milkv-duo-lite          cv1800b_milkv_duo_sd
 milkv-duo-spinand       cv1800b_milkv_duo_spinand
 milkv-duo-spinor        cv1800b_milkv_duo_spinor
 milkv-duo256m           cv1812cp_milkv_duo256m_sd
-milkv-duo256m-lite      cv1812cp_milkv_duo256m_sd
+milkv-duo256m-spinand   cv1812cp_milkv_duo256m_spinand
+milkv-duo256m-spinor    cv1812cp_milkv_duo256m_spinor
 ```
 
 ```bash
@@ -144,10 +148,12 @@ pack_sd_image
 
 生成的固件位置：
 ```
-Duo:      	install/soc_cv1800b_milkv_duo_sd/[board].img
-Duo(nor): 	install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
-Duo(nand):	install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
-Duo256M:  	install/soc_cv1812cp_milkv_duo256m_sd/[board].img
+Duo:      		install/soc_cv1800b_milkv_duo_sd/[board].img
+Duo(nor): 		install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
+Duo(nand):		install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
+Duo256M:  		install/soc_cv1812cp_milkv_duo256m_sd/[board].img
+Duo256M(nor): 		install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
+Duo256M(nand):		install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
 ```
 
 ## 二、使用 Docker 编译
@@ -196,13 +202,14 @@ docker exec -it duodocker /bin/bash -c "cd /home/work && cat /etc/issue && ./bui
 注意命令最后的 `./build.sh [board]` 和前面在 Ubuntu 22.04 中一键编译说明中的用法是一样的，直接 `./build.sh` 可以查看命令的使用方法，用 `./build.sh lunch` 可以调出交互选择菜单，用 `./build.sh [board]` 可以直接编译目标版本，`[board]` 可以替换为:
 ```
 milkv-duo
-milkv-duo-lite
 milkv-duo-spinand
 milkv-duo-spinor
 milkv-duo256m
-milkv-duo256m-lite
+milkv-duo256m-spinand
+milkv-duo256m-spinor
+milkv-duos-emmc
+milkv-duos-sd
 ```
-*带 `lite` 后缀的版本为精简版，不包含 python，pip, pinpong 等库和应用包*
 
 命令中部分参数说明:
 - `duodocker` 运行的 Docker 名字, 与上一步中设置的名字要保持一致
@@ -241,11 +248,11 @@ root@8edea33c2239:/# cd /home/work/
 再依次输入如下命令完成分步编译，命令中的 `[board]` 和 `[config]` 替换为需要编译的版本，当前支持的 `board` 和对应的 `config` 如下：
 ```
 milkv-duo               cv1800b_milkv_duo_sd
-milkv-duo-lite          cv1800b_milkv_duo_sd
 milkv-duo-spinand       cv1800b_milkv_duo_spinand
 milkv-duo-spinor        cv1800b_milkv_duo_spinor
 milkv-duo256m           cv1812cp_milkv_duo256m_sd
-milkv-duo256m-lite      cv1812cp_milkv_duo256m_sd
+milkv-duo256m-spinand   cv1812cp_milkv_duo256m_spinand
+milkv-duo256m-spinor    cv1812cp_milkv_duo256m_spinor
 ```
 
 ```bash
@@ -271,10 +278,12 @@ pack_sd_image
 
 生成的固件位置：
 ```
-Duo:      	install/soc_cv1800b_milkv_duo_sd/[board].img
-Duo(nor): 	install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
-Duo(nand):	install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
-Duo256M:  	install/soc_cv1812cp_milkv_duo256m_sd/[board].img
+Duo:      		install/soc_cv1800b_milkv_duo_sd/[board].img
+Duo(nor): 		install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
+Duo(nand):		install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
+Duo256M:  		install/soc_cv1812cp_milkv_duo256m_sd/[board].img
+Duo256M(nor): 		install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
+Duo256M(nand):		install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
 ```
 
 编译完成后可以用 `exit` 命令退出 Docker 环境：
@@ -366,7 +375,7 @@ appendWindowsPath = false
 ### 登陆到 Duo 终端的方法
 
 - 通过串口线
-- 通过 USB 网卡 (RNDIS) 方式
+- 通过 USB 网卡 (CDC-NCM) 方式
 - 通过以太网接口(需要扩展板支持)
 
 登陆 Duo 终端的用户名和密码分别为：
@@ -392,9 +401,9 @@ mv /mnt/system/blink.sh_backup /mnt/system/blink.sh && sync
 
 ### 使用 IO Board 底板
 
-注意，使用 IO Board 底板时，USB 网卡 (RNDIS) 不可用，如需使用网络功能，请使用底板上的以太网接口。
+注意，使用 IO Board 底板时，USB 网卡 (CDC-NCM) 不可用，如需使用网络功能，请使用底板上的以太网接口。
 
-使用底板上的 4 个 USB 口，需要修改一下配置，将默认固件中的 `usb-rndis` 功能修改为 `usb-host`：
+使用底板上的 4 个 USB 口，需要修改一下配置，将默认固件中的 `usb-ncm` 功能修改为 `usb-host`：
 
 ```bash
 ln -sf /mnt/system/usb-host.sh /mnt/system/usb.sh
@@ -423,10 +432,10 @@ ls /mnt/udisk
 umount /mnt/udisk
 ```
 
-不使用底板时，恢复 USB 网卡 (RNDIS) 的方法：
+不使用底板时，恢复 USB 网卡 (CDC-NCM) 的方法：
 
 ```bash
-ln -sf /mnt/system/usb-rndis.sh /mnt/system/usb.sh
+ln -sf /mnt/system/usb-ncm.sh /mnt/system/usb.sh
 sync
 ```
 
