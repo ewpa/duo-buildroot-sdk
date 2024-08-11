@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# Not required for Arduino build.
+exit
+
 LED_PIN=440
 
 LED_GPIO=/sys/class/gpio/gpio${LED_PIN}

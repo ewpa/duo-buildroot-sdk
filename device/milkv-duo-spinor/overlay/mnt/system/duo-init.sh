@@ -7,5 +7,5 @@ devmem 0x03001068 32 0x3
 # Set Pin-19(GP14) to GPIO
 duo-pinmux -w GP14/GP14 > /dev/null
 
-# insmod pwm module
+# Insmod PWM Module
 insmod /mnt/system/ko/cv180x_pwm.ko
