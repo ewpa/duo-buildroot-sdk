@@ -27,7 +27,7 @@
 
 		dc-gpios = <&portc 9 GPIO_ACTIVE_HIGH>;     //DC/AO
 		reset-gpios = <&porta 15 GPIO_ACTIVE_HIGH>; //RES
-		led-gpios = <&porta 14 GPIO_ACTIVE_HIGH>;   //BL
+		backlight = &backlight;                     //BL
 
 		debug = <0x0>;
 	};
@@ -56,5 +56,11 @@
 
 / {
 	model = "Milk-V Duo";
+
+	backlight: backlight {
+		compatible = "gpio-backlight";
+		gpios = <&porta 14 GPIO_ACTIVE_HIGH>;   //BL
+		default-on;
+	};
 };
 
