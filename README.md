@@ -48,7 +48,7 @@ The following describes the compilation methods in the two environments.
 Install the packages that compile dependencies:
 
 ```bash
-sudo apt install -y pkg-config build-essential ninja-build automake autoconf libtool wget curl git gcc libssl-dev bc slib squashfs-tools android-sdk-libsparse-utils jq python3-distutils scons parallel tree python3-dev python3-pip device-tree-compiler ssh cpio fakeroot libncurses5 flex bison libncurses5-dev genext2fs rsync unzip dosfstools mtools tcl openssh-client cmake expect
+sudo apt install -y pkg-config build-essential ninja-build automake autoconf libtool wget curl git gcc libssl-dev bc slib squashfs-tools android-sdk-libsparse-utils jq python3-distutils scons parallel tree python3-dev python3-pip device-tree-compiler ssh cpio fakeroot libncurses5 flex bison libncurses5-dev genext2fs rsync unzip dosfstools mtools tcl openssh-client cmake expect libconfuse2
 ```
 
 ### Get SDK Source Code
@@ -66,13 +66,19 @@ cd duo-buildroot-sdk/
 ```
 You will see tips on how to use the compiled script:
 ```bash
-# ./build.sh
+$ ./build.sh
 Usage:
 ./build.sh              - Show this menu
 ./build.sh lunch        - Select a board to build
-./build.sh [board]      - Build [board] directly, supported boards asfollows:
-milkv-duo
-milkv-duo256m
+./build.sh [board]      - Build [board] directly, supported boards as follows:
+milkv-duo-sd
+milkv-duo-spinand
+milkv-duo-spinor
+milkv-duo256m-sd
+milkv-duo256m-spinand
+milkv-duo256m-spinor
+milkv-duos-emmc
+milkv-duos-sd
 ```
 Listed at the bottom is the list of currently supported target versions.
 
@@ -80,16 +86,22 @@ As shown in the prompt, there are two ways to compile the target version.
 
 The first method is to execute `./build.sh lunch` to bring up the interactive menu, select the version number to be compiled, and press Enter:
 ```bash
-# ./build.sh lunch
+$ ./build.sh lunch
 Select a target to build:
-1. milkv-duo
-2. milkv-duo256m
+1. milkv-duo-sd
+2. milkv-duo-spinand
+3. milkv-duo-spinor
+4. milkv-duo256m-sd
+5. milkv-duo256m-spinand
+6. milkv-duo256m-spinor
+7. milkv-duos-emmc
+8. milkv-duos-sd
 Which would you like:
 ```
 
 The second method is to put the name of the target version after the script and compile it directly. For example, if you need to compile the image of `milkv-duo`, the command is as follows:
 ```bash
-# ./build.sh milkv-duo
+$ ./build.sh milkv-duo
 ```
 
 After a successful compilation, you can find the generated SD card burning image `milkv-duo-*-*.img` in the `out` directory.
@@ -98,44 +110,87 @@ After a successful compilation, you can find the generated SD card burning image
 
 ### <2>. Step-by-step Compilation
 
-If you have not executed the one-click compilation script, you need to manually download the toolchain [host-tools](https://sophon-file.sophon.cn/sophon-prod-s3/drive/23/03/07/16/host-tools.tar.gz) and extract it to the SDK root directory:
+If you have not executed the one-click compilation script, you need to manually download the tool chain [host-tools](https://github.com/milkv-duo/host-tools.git) and then copy or move it to the SDK root directory:
 
 ```bash
-tar -xf host-tools.tar.gz -C /your/sdk/path/
+git clone https://github.com/milkv-duo/host-tools.git
+cp -a host-tools duo-buildroot-sdk/
 ```
 
-Then enter the following commands in sequence to complete the step-by-step compilation. Replace `[board]` and `[config]` in the command with the version that needs to be compiled. The currently supported `board` and corresponding `config` are as follows:
-```
-milkv-duo               cv1800b_milkv_duo_sd
-milkv-duo256m           cv1812cp_milkv_duo256m_sd
-```
-
+Source environment:
 ```bash
-source device/[board]/boardconfig.sh
+source build/envsetup_milkv.sh
+```
+If it is the first time to compile, you will be prompted to select the target to compile:
+```bash
+Select a target to build:
+1. milkv-duo
+2. milkv-duo-spinand
+3. milkv-duo-spinor
+4. milkv-duo256m
+5. milkv-duo256m-spinand
+6. milkv-duo256m-spinor
+7. milkv-duos-emmc
+8. milkv-duos-sd
+Which would you like:
+```
 
-source build/milkvsetup.sh
-defconfig [config]
+After selecting the corresponding number, press Enter. After the environment variable is successfully loaded, some information about the current target will be displayed, such as:
+```bash
+Target Board: milkv-duo-sd
+Target Board Storage: sd
+Target Board Config: /build/duo-release/github/device/target/boardconfig.sh
+Target Image Config: /build/duo-release/github/device/target/genimage.cfg
+Build tdl-sdk: 0
+Output dir: /build/duo-release/github/install/soc_cv1800b_milkv_duo_sd
+```
+
+After the environment is loaded, a link named `target` will be created in the `device` directory, linking to the compilation target directory. The next time you source the environment, when the `target` link is detected, you will no longer be prompted to select a target. If you need to change the compilation target, you can add the `lunch` parameter to re-call the interactive menu for selection:
+```bash
+source build/envsetup_milkv.sh lunch
+```
+
+After the environment is loaded successfully, enter the following commands in sequence to complete the step-by-step compilation:
+```bash
 clean_all
 build_all
+```
+
+If you are compiling an SD card image, you also need to execute the following command to generate the `*.img` image:
+```bash
 pack_sd_image
 ```
 
-For example, if you need to compile the image of `milkv-duo`, the step-by-step compilation command is as follows:
+For example, if you need to compile the image of `milkv-duos-sd`, the step-by-step compilation commands are as follows:
 ```bash
-source device/milkv-duo/boardconfig.sh
+source build/envsetup_milkv.sh milkv-duos-sd
 
-source build/milkvsetup.sh
-defconfig cv1800b_milkv_duo_sd
 clean_all
 build_all
 pack_sd_image
 ```
 
 Generated firmware location:
+```text
+Duo:            install/soc_cv1800b_milkv_duo_sd/[board].img
+Duo(nor):       install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
+Duo(nand):      install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
+Duo256M:        install/soc_cv1812cp_milkv_duo256m_sd/[board].img
+Duo256M(nor):   install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
+Duo256M(nand):  install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
+DuoS(SD):       install/soc_cv1813h_milkv_duos_sd/[board].img
+DuoS(eMMC):     install/soc_cv1813h_milkv_duos_emmc/upgrade.zip
 ```
-Duo:      install/soc_cv1800b_milkv_duo_sd/[board].img
-Duo256M:  install/soc_cv1812cp_milkv_duo256m_sd/[board].img
-```
+
+Note that the SD card image is `*.img` and the eMMC image is `upgrade.zip`.
+
+> [!TIP]
+> In addition to using `build_all` for a complete compilation, you can also compile a module separately. Generally speaking, you should first execute `clean_xxx` to clean the intermediate files, and then execute `build_xxx` to recompile. For supported modules, you can enter `clean_` or `build_` and then double-click the `tab` key to view them. The following lists some common module compilation methods:
+> - fsbl: `clean_fsbl`，`build_fsbl`
+> - uboot: `clean_uboot`，`build_uboot`
+> - kernel: `clean_kernel`，`build_kernel`
+> - osdrv: `clean_osdrv`，`build_osdrv`
+> - middleware: `clean_middleware`，`build_middleware`
 
 ## 2. Compiled using Docker
 
@@ -182,8 +237,14 @@ docker exec -it duodocker /bin/bash -c "cd /home/work && cat /etc/issue && ./bui
 
 Note that the `./build.sh [board]` at the end of the command is the same as the previous usage in the one-click compilation instructions in Ubuntu 22.04. Use `./build.sh` can see how to use the command, use `./ build.sh lunch` can bring up the interactive selection menu, use `./build.sh [board]` to directly compile the target version, `[board]` can be replaced with:
 ```
-milkv-duo
-milkv-duo256m
+milkv-duo-sd
+milkv-duo-spinand
+milkv-duo-spinor
+milkv-duo256m-sd
+milkv-duo256m-spinand
+milkv-duo256m-spinor
+milkv-duos-emmc
+milkv-duos-sd
 ```
 
 Description of some parameters in the command:
@@ -202,13 +263,21 @@ After successful compilation, you can see the generated SD card burning image `[
 
 ### <2>. Compile step by step using Docker
 
-If you have not executed the one-click compilation script, you need to manually download the toolchain [host-tools](https://sophon-file.sophon.cn/sophon-prod-s3/drive/23/03/07/16/host-tools.tar.gz) and extract it to the SDK root directory:
+If you have not executed the one-click compilation script, you need to manually download the tool chain [host-tools](https://github.com/milkv-duo/host-tools.git) and then copy or move it to the SDK root directory:
 
 ```bash
-tar -xf host-tools.tar.gz -C /your/sdk/path/
+git clone https://github.com/milkv-duo/host-tools.git
+cp -a host-tools duo-buildroot-sdk/
 ```
 
-Step-by-step compilation requires logging into Docker to operate. Use the command `docker ps -a` to view and record the ID number of the container, such as 8edea33c2239.
+Step-by-step compilation requires logging into Docker to operate. Use the command `docker ps -a` to view and record the ID number of the container, such as `8edea33c2239`.
+
+If `duodocker` is not in the list, the container may have been stopped. You need to rerun it and then check the ID number in the window:
+```bash
+cd duo-buildroot-sdk/
+docker run --privileged -itd --name duodocker -v $(pwd):/home/work milkvtech/milkv-duo:latest /bin/bash
+docker ps -a
+```
 
 Enter Docker:
 ```bash
@@ -220,40 +289,80 @@ Enter the code directory bound in Docker：
 root@8edea33c2239:/# cd /home/work/
 ```
 
-Then enter the following commands in sequence to complete the step-by-step compilation. Replace `[board]` and `[config]` in the command with the version that needs to be compiled. The currently supported `board` and corresponding `config` are as follows:
-```
-milkv-duo               cv1800b_milkv_duo_sd
-milkv-duo256m           cv1812cp_milkv_duo256m_sd
-```
-
+Source environment:
 ```bash
-source device/[board]/boardconfig.sh
+source build/envsetup_milkv.sh
+```
+If it is the first time to compile, you will be prompted to select the target to compile:
+```bash
+Select a target to build:
+1. milkv-duo
+2. milkv-duo-spinand
+3. milkv-duo-spinor
+4. milkv-duo256m
+5. milkv-duo256m-spinand
+6. milkv-duo256m-spinor
+7. milkv-duos-emmc
+8. milkv-duos-sd
+Which would you like:
+```
 
-source build/milkvsetup.sh
-defconfig [config]
+After selecting the corresponding number, press Enter. After the environment variable is successfully loaded, some information about the current target will be displayed, such as:
+```bash
+Target Board: milkv-duo-sd
+Target Board Storage: sd
+Target Board Config: /build/duo-release/github/device/target/boardconfig.sh
+Target Image Config: /build/duo-release/github/device/target/genimage.cfg
+Build tdl-sdk: 0
+Output dir: /build/duo-release/github/install/soc_cv1800b_milkv_duo_sd
+```
+
+After the environment is loaded, a link named `target` will be created in the `device` directory, linking to the compilation target directory. The next time you source the environment, when the `target` link is detected, you will no longer be prompted to select a target. If you need to change the compilation target, you can add the `lunch` parameter to re-call the interactive menu for selection:
+```bash
+source build/envsetup_milkv.sh lunch
+```
+
+After the environment is loaded successfully, enter the following commands in sequence to complete the step-by-step compilation:
+```bash
 clean_all
 build_all
+```
+
+If you are compiling an SD card image, you also need to execute the following command to generate the `*.img` image:
+```bash
 pack_sd_image
 ```
 
-For example, if you need to compile the image of `milkv-duo`, the step-by-step compilation command is as follows:
+For example, if you need to compile the image of `milkv-duos-sd`, the step-by-step compilation commands are as follows:
 ```bash
-source device/milkv-duo/boardconfig.sh
+source build/envsetup_milkv.sh milkv-duos-sd
 
-source build/milkvsetup.sh
-defconfig cv1800b_milkv_duo_sd
 clean_all
 build_all
 pack_sd_image
 ```
 
 Generated firmware location:
-```
-Duo:      install/soc_cv1800b_milkv_duo_sd/[board].img
-Duo256M:  install/soc_cv1812cp_milkv_duo256m_sd/[board].img
+```text
+Duo:            install/soc_cv1800b_milkv_duo_sd/[board].img
+Duo(nor):       install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
+Duo(nand):      install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
+Duo256M:        install/soc_cv1812cp_milkv_duo256m_sd/[board].img
+Duo256M(nor):   install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinor、rootfs.spinor
+Duo256M(nand):  install/soc_cv1800b_milkv_duo_sd/fip.bin、boot.spinand、rootfs.spinand、system.spinand、cfg.spinand
+DuoS(SD):       install/soc_cv1813h_milkv_duos_sd/[board].img
+DuoS(eMMC):     install/soc_cv1813h_milkv_duos_emmc/upgrade.zip
 ```
 
-Generated firmware location: `install/soc_cv1800b_milkv_duo_sd/milkv-duo.img`.
+Note that the SD card image is `*.img` and the eMMC image is `upgrade.zip`.
+
+> [!TIP]
+> In addition to using `build_all` for a complete compilation, you can also compile a module separately. Generally speaking, you should first execute `clean_xxx` to clean the intermediate files, and then execute `build_xxx` to recompile. For supported modules, you can enter `clean_` or `build_` and then double-click the `tab` key to view them. The following lists some common module compilation methods:
+> - fsbl: `clean_fsbl`，`build_fsbl`
+> - uboot: `clean_uboot`，`build_uboot`
+> - kernel: `clean_kernel`，`build_kernel`
+> - osdrv: `clean_osdrv`，`build_osdrv`
+> - middleware: `clean_middleware`，`build_middleware`
 
 After compilation is completed, you can use the `exit` command to exit the Docker environment:
 ```bash
@@ -324,7 +433,7 @@ To rollback this change in `/etc/wsl.conf` file set `appendWindowsPath` as true.
 - To write the generated image to a microSD card on Windows, you can use tools like `balenaEtcher`, `Rufus`, or `Win32 Disk Imager`.
 - To write the generated image to a microSD card on Linux, use the `dd` command. **Please make sure to carefully confirm that the `of` device `/dev/sdX` corresponds to the microSD card you want to burn**:
   ```bash
-  sudo dd if=milkv-duo-*-*.img of=/dev/sdX
+  sudo dd if=milkv-duo-*-*.img of=/dev/sdX conv=fsync status=progress
   ```
 
 ## Power ON
