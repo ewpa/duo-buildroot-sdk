@@ -139,8 +139,8 @@ static int init_display(struct fbtft_par *par)
 
 	write_reg(par, MIPI_DCS_SET_DISPLAY_ON);
 
-	if (HSD20_IPS)
-		write_reg(par, MIPI_DCS_ENTER_INVERT_MODE);
+	//if (HSD20_IPS)
+	//	write_reg(par, MIPI_DCS_ENTER_INVERT_MODE);
 
 	return 0;
 }
@@ -252,8 +252,8 @@ static int blank(struct fbtft_par *par, bool on)
 
 static struct fbtft_display display = {
 	.regwidth = 8,
-	.width = 240,
-	.height = 320,
+	.width = 128,//240
+	.height = 160,//320
 	.gamma_num = 2,
 	.gamma_len = 14,
 	.gamma = HSD20_IPS_GAMMA,
