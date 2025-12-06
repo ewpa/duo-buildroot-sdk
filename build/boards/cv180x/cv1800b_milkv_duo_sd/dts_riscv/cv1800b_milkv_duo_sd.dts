@@ -25,7 +25,7 @@
 		rgb;
 		buswidth = <8>;
 
-		dc-gpios = <&porta 23 GPIO_ACTIVE_HIGH>;    //DC/AO
+		dc-gpios = <&portc 9 GPIO_ACTIVE_HIGH>;     //DC/AO
 		reset-gpios = <&porta 15 GPIO_ACTIVE_HIGH>; //RES
 		led-gpios = <&porta 14 GPIO_ACTIVE_HIGH>;   //BL
 

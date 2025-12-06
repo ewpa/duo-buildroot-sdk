@@ -252,8 +252,8 @@ static int blank(struct fbtft_par *par, bool on)
 
 static struct fbtft_display display = {
 	.regwidth = 8,
-	.width = 128,//240
-	.height = 160,//320
+	.width = 128,
+	.height = 160,
 	.gamma_num = 2,
 	.gamma_len = 14,
 	.gamma = HSD20_IPS_GAMMA,
